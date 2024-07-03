@@ -42,41 +42,41 @@ resource "aws_codepipeline" "acc1" {
     }
   }
 
-  # stage {
-  #   name = "TerraformValidate"
-  #   action {
-  #     name             = "Validate"
-  #     category         = "Build"
-  #     owner            = "AWS"
-  #     provider         = "CodeBuild"
-  #     version          = "1"
-  #     run_order        = 2
-  #     input_artifacts  = ["SOURCE_ARTIFACT"]
-  #     output_artifacts = ["VALIDATE_ARTIFACT"]
-  #     configuration = {
-  #       ProjectName = aws_codebuild_project.this.name
-  #       EnvironmentVariables = jsonencode([
-  #         {
-  #           name  = "ACTION"
-  #           value = "VALIDATE"
-  #           type  = "PLAINTEXT"
-  #         }
-  #       ])
-  #     }
-  #   }
-  # }
+  stage {
+    name = "TerraformValidate"
+    action {
+      name             = "Validate"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      run_order        = 2
+      input_artifacts  = ["SOURCE_ARTIFACT"]
+      output_artifacts = ["VALIDATE_ARTIFACT"]
+      configuration = {
+        ProjectName = aws_codebuild_project.this.name
+        EnvironmentVariables = jsonencode([
+          {
+            name  = "ACTION"
+            value = "VALIDATE"
+            type  = "PLAINTEXT"
+          }
+        ])
+      }
+    }
+  }
 
   stage {
     name = "TerraformPlan"
     action {
-      name      = "Plan"
-      category  = "Build"
-      owner     = "AWS"
-      provider  = "CodeBuild"
-      version   = "1"
-      run_order = 2
-      # input_artifacts  = ["VALIDATE_ARTIFACT"]
-      input_artifacts  = ["SOURCE_ARTIFACT"]
+      name            = "Plan"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      version         = "1"
+      run_order       = 2
+      input_artifacts = ["VALIDATE_ARTIFACT"]
+      # input_artifacts  = ["SOURCE_ARTIFACT"]
       output_artifacts = ["PLAN_ARTIFACT"]
       configuration = {
         ProjectName = aws_codebuild_project.this.name
@@ -91,82 +91,82 @@ resource "aws_codepipeline" "acc1" {
     }
   }
 
-  # stage {
-  #   name = "ApprovalApply"
-  #   action {
-  #     name      = "Apply"
-  #     category  = "Approval"
-  #     owner     = "AWS"
-  #     provider  = "Manual"
-  #     version   = "1"
-  #     run_order = 3
-  #     configuration = {
-  #       NotificationArn = aws_sns_topic.this.arn
-  #     }
-  #   }
-  # }
+  stage {
+    name = "ApprovalApply"
+    action {
+      name      = "Apply"
+      category  = "Approval"
+      owner     = "AWS"
+      provider  = "Manual"
+      version   = "1"
+      run_order = 3
+      configuration = {
+        NotificationArn = aws_sns_topic.this.arn
+      }
+    }
+  }
 
-  # stage {
-  #   name = "TerraformApply"
-  #   action {
-  #     name            = "Apply"
-  #     category        = "Build"
-  #     owner           = "AWS"
-  #     provider        = "CodeBuild"
-  #     version         = "1"
-  #     run_order       = 4
-  #     input_artifacts = ["PLAN_ARTIFACT"]
-  #     output_artifacts = ["APPLY_ARTIFACT"]
-  #     configuration = {
-  #       ProjectName   = aws_codebuild_project.this.name
-  #       EnvironmentVariables = jsonencode([
-  #         {
-  #           name  = "ACTION"
-  #           value = "APPLY"
-  #           type  = "PLAINTEXT"
-  #         }
-  #       ])
-  #     }
-  #   }
-  # }
+  stage {
+    name = "TerraformApply"
+    action {
+      name             = "Apply"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      run_order        = 4
+      input_artifacts  = ["PLAN_ARTIFACT"]
+      output_artifacts = ["APPLY_ARTIFACT"]
+      configuration = {
+        ProjectName = aws_codebuild_project.this.name
+        EnvironmentVariables = jsonencode([
+          {
+            name  = "ACTION"
+            value = "APPLY"
+            type  = "PLAINTEXT"
+          }
+        ])
+      }
+    }
+  }
 
-  # stage {
-  #   name = "ApprovalDestroy"
-  #   action {
-  #     name      = "Destroy"
-  #     category  = "Approval"
-  #     owner     = "AWS"
-  #     provider  = "Manual"
-  #     version   = "1"
-  #     run_order = 5
-  #     configuration = {
-  #       NotificationArn = aws_sns_topic.this.arn
-  #     }
-  #   }
-  # }
+  stage {
+    name = "ApprovalDestroy"
+    action {
+      name      = "Destroy"
+      category  = "Approval"
+      owner     = "AWS"
+      provider  = "Manual"
+      version   = "1"
+      run_order = 5
+      configuration = {
+        NotificationArn = aws_sns_topic.this.arn
+      }
+    }
+  }
 
-  # stage {
-  #   name = "TerraformDestroy"
-  #   action {
-  #     name            = "Destroy"
-  #     category        = "Build"
-  #     owner           = "AWS"
-  #     provider        = "CodeBuild"
-  #     version         = "1"
-  #     run_order       = 6
-  #     input_artifacts = ["APPLY_ARTIFACT"]
-  #     configuration = {
-  #       ProjectName   = aws_codebuild_project.this.name
-  #       EnvironmentVariables = jsonencode([
-  #         {
-  #           name  = "ACTION"
-  #           value = "DESTROY"
-  #           type  = "PLAINTEXT"
-  #         }
-  #       ])
-  #     }
-  #   }
-  # }
+  stage {
+    name = "TerraformDestroy"
+    action {
+      name            = "Destroy"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      version         = "1"
+      run_order       = 6
+      input_artifacts = ["APPLY_ARTIFACT"]
+      configuration = {
+        ProjectName = aws_codebuild_project.this.name
+        EnvironmentVariables = jsonencode([
+          {
+            name  = "ACTION"
+            value = "DESTROY"
+            type  = "PLAINTEXT"
+          }
+        ])
+      }
+    }
+  }
   tags = merge(var.additional_tags, )
 }
 
@@ -186,7 +186,7 @@ resource "aws_iam_role" "codepipeline-acc1" {
       },
     ]
   })
-  tags = merge( var.additional_tags,)
+  tags = merge(var.additional_tags, )
 }
 
 

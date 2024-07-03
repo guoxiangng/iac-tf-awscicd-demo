@@ -19,8 +19,8 @@ resource "aws_codebuild_project" "this" {
   }
 
   source {
-    type      = "CODEPIPELINE"
-    buildspec = file("${path.module}/buildspec.yaml")
+    type = "CODEPIPELINE"
+    # buildspec = file("${path.module}/buildspec.yaml")
   }
 
   logs_config {

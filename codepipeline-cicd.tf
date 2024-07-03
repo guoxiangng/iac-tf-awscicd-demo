@@ -1,9 +1,9 @@
 resource "aws_codepipeline" "this" {
 
-  name     = "cp-iac-tf-${var.projectidentifier}-cicd"
+  name           = "cp-iac-tf-${var.projectidentifier}-cicd"
   pipeline_type  = "V2"
   execution_mode = "QUEUED" #we dont want to allow concurrent terraform builds of the same TF project. 
-  role_arn = aws_iam_role.codepipeline-cicd.arn
+  role_arn       = aws_iam_role.codepipeline-cicd.arn
 
   artifact_store {
 
@@ -101,16 +101,16 @@ resource "aws_codepipeline" "this" {
   stage {
     name = "TerraformApply"
     action {
-      name            = "Apply"
-      category        = "Build"
-      owner           = "AWS"
-      provider        = "CodeBuild"
-      version         = "1"
-      run_order       = 4
-      input_artifacts = ["PLAN_ARTIFACT"]
+      name             = "Apply"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      run_order        = 4
+      input_artifacts  = ["PLAN_ARTIFACT"]
       output_artifacts = ["APPLY_ARTIFACT"]
       configuration = {
-        ProjectName   = aws_codebuild_project.this.name
+        ProjectName = aws_codebuild_project.this.name
         EnvironmentVariables = jsonencode([
           {
             name  = "ACTION"
@@ -148,7 +148,7 @@ resource "aws_codepipeline" "this" {
       run_order       = 6
       input_artifacts = ["APPLY_ARTIFACT"]
       configuration = {
-        ProjectName   = aws_codebuild_project.this.name
+        ProjectName = aws_codebuild_project.this.name
         EnvironmentVariables = jsonencode([
           {
             name  = "ACTION"
@@ -159,7 +159,7 @@ resource "aws_codepipeline" "this" {
       }
     }
   }
-  tags = merge( var.additional_tags,)
+  tags = merge(var.additional_tags, )
 }
 
 
@@ -179,7 +179,7 @@ resource "aws_iam_role" "codepipeline-cicd" {
       },
     ]
   })
-  tags = merge( var.additional_tags,)
+  tags = merge(var.additional_tags, )
 }
 
 
