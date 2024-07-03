@@ -1,6 +1,8 @@
 resource "aws_codepipeline" "this" {
 
   name     = "cp-iac-tf-${var.projectidentifier}-cicd"
+  pipeline_type  = "V2"
+  execution_mode = "QUEUED" #we dont want to allow concurrent terraform builds of the same TF project. 
   role_arn = aws_iam_role.codepipeline-cicd.arn
 
   artifact_store {
@@ -26,7 +28,7 @@ resource "aws_codepipeline" "this" {
       output_artifacts = ["SOURCE_ARTIFACT"]
       configuration = {
         RepositoryName       = aws_codecommit_repository.this.repository_name
-        BranchName           = "main"
+        BranchName           = "master"
         PollForSourceChanges = true
         OutputArtifactFormat = "CODE_ZIP"
       }
