@@ -16,20 +16,39 @@ resource "aws_codepipeline" "this" {
     }
   }
 
+  # stage {
+  #   name = "Source"
+  #   action {
+  #     name             = "Source"
+  #     category         = "Source"
+  #     owner            = "AWS"
+  #     provider         = "CodeCommit"
+  #     version          = "1"
+  #     run_order        = 1
+  #     output_artifacts = ["SOURCE_ARTIFACT"]
+  #     configuration = {
+  #       RepositoryName       = aws_codecommit_repository.this.repository_name
+  #       BranchName           = "master"
+  #       PollForSourceChanges = true
+  #       OutputArtifactFormat = "CODE_ZIP"
+  #     }
+  #   }
+  # }
   stage {
     name = "Source"
     action {
       name             = "Source"
       category         = "Source"
       owner            = "AWS"
-      provider         = "CodeCommit"
+      provider         = "CodeStarSourceConnection"
       version          = "1"
       run_order        = 1
       output_artifacts = ["SOURCE_ARTIFACT"]
       configuration = {
-        RepositoryName       = aws_codecommit_repository.this.repository_name
+        ConnectionArn        = aws_codestarconnections_connection.github-cicd.arn
+        FullRepositoryId       = "guoxiangng/iac-tf-awscicd-demo"
         BranchName           = "master"
-        PollForSourceChanges = true
+        DetectChanges = true
         OutputArtifactFormat = "CODE_ZIP"
       }
     }
