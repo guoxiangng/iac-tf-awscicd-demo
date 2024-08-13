@@ -260,6 +260,13 @@ data "aws_iam_policy_document" "codepipeline-cicd" {
     ]
     resources = [aws_kms_key.this.arn]
   }
+  statement {
+    sid = "codestarconnectionsgithub"
+    actions = [
+      "codestar-connections:UseConnection"
+    ]
+    resources = [aws_codestarconnections_connection.github-cicd.arn]
+  }
 }
 
 resource "aws_iam_policy" "codepipeline-cicd" {
