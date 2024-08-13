@@ -22,21 +22,40 @@ resource "aws_codepipeline" "acc1" {
     }
   }
 
+  # stage {
+  #   name = "CheckoutCode"
+  #   action {
+  #     name             = "Source"
+  #     category         = "Source"
+  #     owner            = "AWS"
+  #     provider         = "CodeCommit"
+  #     version          = "1"
+  #     run_order        = 1
+  #     region           = "ap-southeast-1"
+  #     output_artifacts = ["SOURCE_ARTIFACT"]
+  #     configuration = {
+  #       RepositoryName       = aws_codecommit_repository.this2.repository_name
+  #       BranchName           = "master"
+  #       PollForSourceChanges = true
+  #       OutputArtifactFormat = "CODE_ZIP"
+  #     }
+  #   }
+  # }
   stage {
-    name = "CheckoutCode"
+    name = "Source"
     action {
       name             = "Source"
       category         = "Source"
       owner            = "AWS"
-      provider         = "CodeCommit"
+      provider         = "CodeStarSourceConnection"
       version          = "1"
       run_order        = 1
-      region           = "ap-southeast-1"
       output_artifacts = ["SOURCE_ARTIFACT"]
       configuration = {
-        RepositoryName       = aws_codecommit_repository.this2.repository_name
+        ConnectionArn        = aws_codestarconnections_connection.github-cicd.arn
+        FullRepositoryId       = "guoxiangng/iac-tf-demo-acc1"
         BranchName           = "master"
-        PollForSourceChanges = true
+        DetectChanges = true
         OutputArtifactFormat = "CODE_ZIP"
       }
     }
@@ -247,6 +266,14 @@ data "aws_iam_policy_document" "codepipeline-acc1" {
       "kms:Decrypt"
     ]
     resources = [aws_kms_key.this.arn]
+  }
+
+  statement {
+    sid = "codestarconnectionsgithub"
+    actions = [
+      "codestar-connections:UseConnection"
+    ]
+    resources = [aws_codestarconnections_connection.github-cicd.arn]
   }
 }
 
